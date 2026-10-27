@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Portofolio Husain</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0a08;--panel:#171310;--ink:#f3ead9;--muted:#b3a68d;--gold:#c9a35c;--gold2:#e8cc8d;--danger:#e07a5f;
+  --serif:'Playfair Display',Georgia,serif;--sans:'Manrope',system-ui,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;padding:26px 5vw 70px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-family:var(--serif);font-weight:500;font-size:1.9rem}
+h2{font-family:var(--serif);font-weight:500;font-size:1.35rem;margin-bottom:14px}
+.sub{color:var(--muted);margin:6px 0 26px}
+.card{background:var(--panel);border:1px solid rgba(201,163,92,.2);border-radius:14px;padding:24px;margin-bottom:22px}
+label{display:block;font-size:.82rem;font-weight:700;letter-spacing:.06em;margin:14px 0 6px;color:var(--gold2)}
+label:first-of-type{margin-top:0}
+input,select{width:100%;background:#0f0c09;color:var(--ink);border:1px solid rgba(243,234,217,.22);
+  border-radius:9px;padding:11px 13px;font:500 .95rem var(--sans)}
+input[type=file]{padding:9px 13px}
+button{background:var(--gold);color:#171207;border:0;border-radius:999px;padding:11px 24px;
+  font:700 .9rem var(--sans);cursor:pointer;margin-top:18px}
+button:hover{background:var(--gold2)}
+button:disabled{opacity:.55;cursor:wait}
+button.danger{background:transparent;color:var(--danger);border:1px solid var(--danger);padding:6px 16px;margin:0;font-size:.8rem}
+button.danger:hover{background:rgba(224,122,95,.12)}
+button.ghost{background:transparent;color:var(--ink);border:1px solid rgba(243,234,217,.35)}
+.msg{font-size:.9rem;margin-top:14px;min-height:1.3em}
+.msg.ok{color:#9ec49a}.msg.err{color:var(--danger)}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.topbar button{margin-top:4px}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:18px}
+.item{border:1px solid rgba(243,234,217,.12);border-radius:11px;overflow:hidden;background:#100d0a}
+.item img{width:100%;height:104px;object-fit:cover;display:block}
+.item .meta{padding:9px 11px;font-size:.8rem}
+.item .meta b{display:block;font-size:.86rem}
+.item .meta span{color:var(--muted)}
+.item .meta button{margin-top:8px}
+.vlist{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.vitem{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid rgba(243,234,217,.12);
+  border-radius:11px;padding:11px 14px;background:#100d0a}
+.vitem b{font-size:.92rem}
+.vitem span{display:block;color:var(--muted);font-size:.8rem;word-break:break-all}
+.hidden{display:none!important}
+.hint{color:var(--muted);font-size:.84rem;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <h1>Admin Portofolio</h1>
+      <p class="sub">Kelola foto &amp; video portofolio Husain. Perubahan langsung tampil di web publik.</p>
+    </div>
+    <button id="btnLogout" class="ghost hidden">Keluar</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="card" id="loginCard">
+    <h2>Masuk Admin</h2>
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" required autocomplete="username" placeholder="email@contoh.com">
+      <label for="password">Password</label>
+      <input id="password" type="password" required autocomplete="current-password" placeholder="••••••••">
+      <button type="submit" id="btnLogin">Masuk</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+
+  <!-- PANEL -->
+  <div id="panel" class="hidden">
+    <div class="card">
+      <h2>Tambah Foto</h2>
+      <form id="photoForm">
+        <label for="phFile">File foto</label>
+        <input id="phFile" type="file" accept="image/*" required>
+        <p class="hint">Foto otomatis dikecilkan (maks. 1600px) sebelum diunggah.</p>
+        <label for="phTitle">Judul</label>
+        <input id="phTitle" type="text" required placeholder="cth. Malam Pengantar Tugas">
+        <label for="phCat">Kategori</label>
+        <select id="phCat">
+          <option value="annual-event">Annual Event</option>
+          <option value="sport">Sport</option>
+          <option value="graduation">Graduation</option>
+        </select>
+        <button type="submit" id="btnPhoto">Unggah Foto</button>
+        <div class="msg" id="photoMsg"></div>
+      </form>
+      <div class="list" id="photoList"></div>
+    </div>
+
+    <div class="card">
+      <h2>Tambah Video</h2>
+      <form id="videoForm">
+        <label for="vdTitle">Judul</label>
+        <input id="vdTitle" type="text" required placeholder="cth. Gathering Poskes Banyudono">
+        <label for="vdLabel">Label (opsional)</label>
+        <input id="vdLabel" type="text" placeholder="cth. Dokumentasi Event · Video">
+        <label for="vdLink">Link video</label>
+        <input id="vdLink" type="url" required placeholder="Tempel link Drive / YouTube / TikTok / Instagram / MP4">
+        <p class="hint">Link Drive &amp; YouTube otomatis jadi player di web. Link TikTok/Instagram tampil sebagai kartu tautan “Tonton di sumber”.</p>
+        <button type="submit" id="btnVideo">Tambah Video</button>
+        <div class="msg" id="videoMsg"></div>
+      </form>
+      <div class="vlist" id="videoList"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://ypgrksdzcagbtkjhjigw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_Si9XaCpQm55XOLLCbdtZ7Q_Kof_ND87';
+const sb = (window.supabase && window.supabase.createClient)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+const BUCKET = 'portfolio';
+
+const $ = id => document.getElementById(id);
+if(!sb){
+  setMsg($('loginMsg'), 'Library Supabase gagal dimuat. Periksa koneksi internet lalu muat ulang halaman.', false);
+  $('btnLogin').disabled = true;
+  throw new Error('supabase-js not loaded');
+}
+function setMsg(el, text, ok){
+  el.textContent = text || '';
+  el.className = 'msg ' + (text ? (ok ? 'ok' : 'err') : '');
+}
+
+/* ---------- Auth ---------- */
+async function refreshAuth(){
+  const { data } = await sb.auth.getSession();
+  const logged = !!(data && data.session);
+  $('loginCard').classList.toggle('hidden', logged);
+  $('panel').classList.toggle('hidden', !logged);
+  $('btnLogout').classList.toggle('hidden', !logged);
+  if(logged){ loadPhotos(); loadVideos(); }
+}
+$('loginForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  $('btnLogin').disabled = true; setMsg($('loginMsg'), 'Memeriksa…', true);
+  const { error } = await sb.auth.signInWithPassword({
+    email: $('email').value.trim(), password: $('password').value
+  });
+  $('btnLogin').disabled = false;
+  if(error){ setMsg($('loginMsg'), 'Gagal masuk: ' + error.message, false); return; }
+  setMsg($('loginMsg'), '', true);
+  refreshAuth();
+});
+$('btnLogout').addEventListener('click', async ()=>{ await sb.auth.signOut(); refreshAuth(); });
+sb.auth.onAuthStateChange(()=>refreshAuth());
+
+/* ---------- Foto ---------- */
+async function fileToJpegBlob(file){
+  let bmp;
+  try{ bmp = await createImageBitmap(file, { imageOrientation:'from-image' }); }
+  catch(e){ bmp = await createImageBitmap(file); }
+  const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+  const w = Math.max(1, Math.round(bmp.width * scale));
+  const h = Math.max(1, Math.round(bmp.height * scale));
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  c.getContext('2d').drawImage(bmp, 0, 0, w, h);
+  return new Promise(res => c.toBlob(res, 'image/jpeg', 0.85));
+}
+
+$('photoForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const file = $('phFile').files[0];
+  const title = $('phTitle').value.trim();
+  const category = $('phCat').value;
+  if(!file || !title) return;
+  $('btnPhoto').disabled = true; setMsg($('photoMsg'), 'Mengecilkan & mengunggah foto…', true);
+  try{
+    const blob = await fileToJpegBlob(file);
+    if(!blob) throw new Error('Foto tidak bisa diproses.');
+    const path = 'photo-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.jpg';
+    const up = await sb.storage.from(BUCKET).upload(path, blob, { contentType:'image/jpeg', upsert:false });
+    if(up.error) throw up.error;
+    const { data: pub } = sb.storage.from(BUCKET).getPublicUrl(path);
+    const ins = await sb.from('portfolio_photos').insert({
+      title: title, category: category, image_url: pub.publicUrl, storage_path: path
+    });
+    if(ins.error){
+      await sb.storage.from(BUCKET).remove([path]); // rollback file yatim
+      throw ins.error;
+    }
+    setMsg($('photoMsg'), 'Foto terunggah & tampil di web. ✔', true);
+    e.target.reset();
+    loadPhotos();
+  }catch(err){
+    setMsg($('photoMsg'), 'Gagal: ' + (err.message || err), false);
+  }
+  $('btnPhoto').disabled = false;
+});
+
+async function loadPhotos(){
+  const { data, error } = await sb.from('portfolio_photos')
+    .select('*').order('sort_order', {ascending:true}).order('created_at', {ascending:true});
+  const box = $('photoList'); box.innerHTML = '';
+  if(error){ box.innerHTML = '<p class="hint">Gagal memuat: ' + error.message + '</p>'; return; }
+  (data || []).forEach(p=>{
+    const d = document.createElement('div'); d.className = 'item';
+    const img = document.createElement('img'); img.src = p.image_url; img.alt = p.title || '';
+    const meta = document.createElement('div'); meta.className = 'meta';
+    const b = document.createElement('b'); b.textContent = p.title || '(tanpa judul)';
+    const s = document.createElement('span'); s.textContent = p.category;
+    const btn = document.createElement('button'); btn.className = 'danger'; btn.textContent = 'Hapus';
+    btn.addEventListener('click', ()=>delPhoto(p, btn));
+    meta.append(b, s, btn); d.append(img, meta); box.appendChild(d);
+  });
+}
+async function delPhoto(p, btn){
+  if(!confirm('Hapus foto "' + (p.title || '') + '"?')) return;
+  btn.disabled = true;
+  if(p.storage_path) await sb.storage.from(BUCKET).remove([p.storage_path]);
+  const { error } = await sb.from('portfolio_photos').delete().eq('id', p.id);
+  if(error){ alert('Gagal menghapus: ' + error.message); btn.disabled = false; return; }
+  loadPhotos();
+}
+
+/* ---------- Video ---------- */
+function parseVideoLink(raw){
+  const url = (raw || '').trim();
+  let m = url.match(/drive\.google\.com\/file\/d\/([^/?#]+)/) || url.match(/drive\.google\.com\/open\?id=([\w-]+)/);
+  if(m) return { embed_url: 'https://drive.google.com/file/d/' + m[1] + '/preview', source_url: url };
+  m = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/);
+  if(m) return { embed_url: 'https://www.youtube.com/embed/' + m[1], source_url: url };
+  if(/\.mp4($|[?#])/i.test(url)) return { embed_url: url, source_url: url };
+  // TikTok / Instagram / lainnya: kartu tautan
+  return { embed_url: '', source_url: url };
+}
+
+$('videoForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const title = $('vdTitle').value.trim();
+  const label = $('vdLabel').value.trim();
+  const parsed = parseVideoLink($('vdLink').value);
+  if(!title || !parsed.source_url) return;
+  $('btnVideo').disabled = true; setMsg($('videoMsg'), 'Menyimpan…', true);
+  const { error } = await sb.from('portfolio_videos').insert({
+    title: title, label: label || null,
+    embed_url: parsed.embed_url, source_url: parsed.source_url
+  });
+  $('btnVideo').disabled = false;
+  if(error){ setMsg($('videoMsg'), 'Gagal: ' + error.message, false); return; }
+  setMsg($('videoMsg'), 'Video ditambahkan & tampil di web. ✔', true);
+  e.target.reset();
+  loadVideos();
+});
+
+async function loadVideos(){
+  const { data, error } = await sb.from('portfolio_videos')
+    .select('*').order('sort_order', {ascending:true}).order('created_at', {ascending:true});
+  const box = $('videoList'); box.innerHTML = '';
+  if(error){ box.innerHTML = '<p class="hint">Gagal memuat: ' + error.message + '</p>'; return; }
+  (data || []).forEach(v=>{
+    const d = document.createElement('div'); d.className = 'vitem';
+    const left = document.createElement('div');
+    const b = document.createElement('b'); b.textContent = v.title || '(tanpa judul)';
+    const s = document.createElement('span'); s.textContent = (v.label ? v.label + ' · ' : '') + (v.source_url || v.embed_url || '');
+    left.append(b, s);
+    const btn = document.createElement('button'); btn.className = 'danger'; btn.textContent = 'Hapus';
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('Hapus video "' + (v.title || '') + '"?')) return;
+      btn.disabled = true;
+      const { error } = await sb.from('portfolio_videos').delete().eq('id', v.id);
+      if(error){ alert('Gagal menghapus: ' + error.message); btn.disabled = false; return; }
+      loadVideos();
+    });
+    d.append(left, btn); box.appendChild(d);
+  });
+}
+
+refreshAuth();
+</script>
+</body>
+</html>
