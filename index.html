@@ -79,9 +79,11 @@ nav{position:fixed;inset:0 0 auto 0;z-index:60;display:flex;align-items:center;j
 /* VIDEO */
 .smk-note{border-left:3px solid var(--gold);background:rgba(201,163,92,.07);padding:16px 18px;border-radius:0 10px 10px 0;
   color:#ddd2ba;font-size:.94rem;margin-bottom:34px}
-.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:20px}
 .vcard{background:var(--panel);border:1px solid rgba(201,163,92,.16);border-radius:14px;overflow:hidden}
 .vframe{position:relative;aspect-ratio:16/9;background:#000}
+.vframe.portrait{aspect-ratio:9/16;max-width:300px;margin:0 auto}
+@media(max-width:640px){.vframe.portrait{max-width:min(280px,84vw)}}
 .vframe iframe,.vframe video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:contain;background:#000}
 .vbody{padding:16px 18px 18px}
 .vbody h3{font-size:1.16rem;margin-bottom:4px}
@@ -438,6 +440,7 @@ lb.addEventListener('click', e=>{ if(e.target===lb) lb.classList.remove('open');
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') lb.classList.remove('open'); });
 
 /* ---------- Videos ---------- */
+const PORTRAIT_DRIVE_IDS = ['1-PP89D_TA9FHVEbHo8deRTOwrOh_EFoT','1J1RT_KJroHc_nBDUPFN3q4mX-f4j7fl4'];
 function renderVideos(videos){
   const vg = document.getElementById('vgrid');
   vg.innerHTML = '';
@@ -453,8 +456,10 @@ function renderVideos(videos){
       if(/\.mp4($|\?)/i.test(v.embed_url)){
         const vid = document.createElement('video');
         vid.src = v.embed_url; vid.controls = true; vid.preload = 'metadata';
+        vid.addEventListener('loadedmetadata', ()=>{ if(vid.videoHeight > vid.videoWidth) fr.classList.add('portrait'); });
         fr.appendChild(vid);
       } else {
+        if(PORTRAIT_DRIVE_IDS.some(id => v.embed_url.includes(id))) fr.classList.add('portrait');
         const f = document.createElement('iframe');
         f.src = v.embed_url; f.title = v.title || 'Video';
         f.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
